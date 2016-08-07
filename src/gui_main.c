@@ -12,7 +12,7 @@ static Layer *s_layer_bg, *s_layer_content;
 static TextLayer *s_text_upper_descr, *s_text_upper_time1, *s_text_upper_time2;
 static TextLayer *s_text_center_descr;
 static TextLayer *s_text_lower_descr, *s_text_lower_time1, *s_text_lower_time2;
-static GBitmap *s_ab_icon_check_in, *s_ab_icon_check_out, *s_ab_icon_task;
+static GBitmap *s_ab_icon_check_in, *s_ab_icon_check_out, *s_ab_icon_task, *s_ab_icon_switch;
 
 static char buf_descr[30];
 static GColor c_bg, c_descr;
@@ -65,11 +65,11 @@ static void gui_ab_update_icons(void) {
   if(started) {
     action_bar_layer_set_icon(s_action_bar, BUTTON_ID_UP, s_ab_icon_check_out);
     action_bar_layer_set_icon(s_action_bar, BUTTON_ID_SELECT, s_ab_icon_task);
-    //action_bar_layer_set_icon(s_action_bar, BUTTON_ID_DOWN, s_ab_icon_task);
+    action_bar_layer_set_icon(s_action_bar, BUTTON_ID_DOWN, s_ab_icon_switch);
   } else {
     action_bar_layer_set_icon(s_action_bar, BUTTON_ID_UP, s_ab_icon_check_in);
     action_bar_layer_clear_icon(s_action_bar, BUTTON_ID_SELECT);
-    action_bar_layer_clear_icon(s_action_bar, BUTTON_ID_DOWN);
+    action_bar_layer_set_icon(s_action_bar, BUTTON_ID_DOWN, s_ab_icon_switch);
   }
 }
 
@@ -78,7 +78,7 @@ static void gui_ab_onclick_up(ClickRecognizerRef recognizer, void *context) {
 }
 
 static void gui_ab_onclick_select(ClickRecognizerRef recognizer, void *context) {
-  //msg_cmd_fetch_status();
+	/* TODO: menu for task selector */
 }
 
 static void gui_ab_onclick_down(ClickRecognizerRef recognizer, void *context) {
@@ -119,6 +119,10 @@ static void gui_layer_bg_update(Layer *layer, GContext *ctx) {
   graphics_context_set_stroke_width(ctx, 1);
   graphics_draw_line(ctx, GPoint(PADDING_X, height/2-10), GPoint(width-PADDING_X, height/2-10));
   graphics_draw_line(ctx, GPoint(PADDING_X, height/2+10), GPoint(width-PADDING_X, height/2+10));
+}
+
+static void gui_tick_handler(struct tm *time_now, TimeUnits changed) {
+	msg_cmd_fetch_status();
 }
 
 static void gui_main_window_load(Window *window) {
@@ -227,6 +231,7 @@ void gui_main_init(void) {
   s_ab_icon_check_in = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_CHECK_IN);
   s_ab_icon_check_out = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_CHECK_OUT);
   s_ab_icon_task = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_TASK);
+  s_ab_icon_switch = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_SWITCH);
   
   s_main_window = window_create();
   window_set_window_handlers(s_main_window, (WindowHandlers) {
@@ -238,12 +243,18 @@ void gui_main_init(void) {
   gui_update_upper_time("", "", GColorBlack, "", GColorBlack);
   gui_update_lower_time("", "", GColorBlack, "", GColorBlack);
   gui_update_common(false, "Laden ...", GColorBlack, GColorWhite);
+
+	/* update data every minute */
+	tick_timer_service_subscribe(MINUTE_UNIT, gui_tick_handler);
 }
 
 void gui_main_deinit(void) {
+	tick_timer_service_unsubscribe();
+	
   window_destroy(s_main_window);
   
   gbitmap_destroy(s_ab_icon_check_in);
   gbitmap_destroy(s_ab_icon_check_out);
   gbitmap_destroy(s_ab_icon_task);
+  gbitmap_destroy(s_ab_icon_switch);
 }

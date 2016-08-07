@@ -102,3 +102,12 @@ static void data_update_gui(void) {
     gui_update_lower_time("", "", GColorBlack, "", GColorBlack);
   }
 }
+
+void data_init(void) {
+	data_clear_display_cache();
+	display_id = 0;
+}
+
+void data_deinit(void) {
+	
+}

@@ -13,5 +13,6 @@ static void gui_ab_onclick_down(ClickRecognizerRef recognizer, void *context);
 static void gui_ab_click_provider(void *context);
 static void gui_layer_content_update(Layer *layer, GContext *ctx);
 static void gui_layer_bg_update(Layer *layer, GContext *ctx);
+static void gui_tick_handler(struct tm *time_now, TimeUnits changed);
 static void gui_main_window_load(Window *window);
 static void gui_main_window_unload(Window *window);
