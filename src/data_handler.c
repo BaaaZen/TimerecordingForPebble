@@ -38,7 +38,9 @@ void data_update_display_cache(int cache_id, char *d_s, GColor d_c, char *t1_s, 
     while(display_cache_size < DISPLAY_CACHE_SIZE_MAX) {
       if(display_cache[display_cache_size].enabled) {
         display_cache_size++;
-      }
+      } else {
+				break;
+			}
     }
   }
 

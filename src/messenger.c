@@ -3,12 +3,9 @@
 #include "data_handler.h"
 
 static void msg_inbox_received_callback(DictionaryIterator *iter, void *context) {
-  // A new message has been successfully received
-
-  // Does this message contain a temperature value?
+  // message received -> fetch and parse command in package
   Tuple *cmd_tuple = dict_find(iter, MESSAGE_KEY_CMD);
   if(cmd_tuple) {
-    // This is a uint8_t!
     uint8_t cmd = cmd_tuple->value->uint8;
     
     if(cmd == MESSAGE_CMD_STATUS_RESPONSE) {
