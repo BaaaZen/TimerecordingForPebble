@@ -1,0 +1,48 @@
+{
+    "author": "Mirko Hansen Internetdienstleistungen",
+    "dependencies": {},
+    "keywords": [],
+    "name": "timerecording-for-pebble",
+    "pebble": {
+        "capabilities": [
+            ""
+        ],
+        "displayName": "Timerecording for Pebble",
+        "enableMultiJS": true,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/ab_button_check-in.png",
+                    "name": "AB_BUTTON_CHECK_IN",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/ab_button_check-out.png",
+                    "name": "AB_BUTTON_CHECK_OUT",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/ab_button_task.png",
+                    "name": "AB_BUTTON_TASK",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk"
+        ],
+        "uuid": "43157217-0040-4514-a747-0042745874fd",
+        "watchapp": {
+            "watchface": false
+        }
+    },
+    "version": "0.1.0"
+}
