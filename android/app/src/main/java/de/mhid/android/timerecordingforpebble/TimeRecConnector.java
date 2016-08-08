@@ -13,9 +13,13 @@ public class TimeRecConnector {
     private static final int FLAG_WEEKLY_DELTA = 1;
     private static final int FLAG_MONTHLY_DELTA = 2;
     private static final int FLAG_FOR_WEAR_NOTIFICATION = 4;
+    private static final int FLAG_TOTAL_WEEK = 8;
+    private static final int FLAG_TOTAL_MONTH = 16;
 
     protected static final String TIME_TOTAL_SECS = "TIME_TOTAL_SECS";
     protected static final String TIME_TOTAL_FORMATTED = "TIME_TOTAL_FORMATTED";
+    protected static final String TIME_TOTAL_WEEK_FORMATTED = "TIME_TOTAL_WEEK_FORMATTED";
+    protected static final String TIME_TOTAL_MONTH_FORMATTED = "TIME_TOTAL_MONTH_FORMATTED";
     protected static final String AMOUNT_TOTAL = "AMOUNT_TOTAL";
     protected static final String AMOUNT_TOTAL_FORMATTED = "AMOUNT_TOTAL_FORMATTED";
     protected static final String VALUE1_TOTAL = "VALUE1_TOTAL"; //double
@@ -26,6 +30,7 @@ public class TimeRecConnector {
     protected static final String DELTA_WEEK_SECS = "DELTA_WEEK_SECS";
     protected static final String DELTA_WEEK_FORMATTED = "DELTA_WEEK_FORMATTED";
     protected static final String DAY_TARGET_REACHED = "DAY_TARGET_REACHED";
+    protected static final String DAY_TARGET_REACHED_FORMATTED_SHORT = "DAY_TARGET_REACHED_FORMATTED_SHORT";
     protected static final String DAY_MAX_TIME_THRESHOLD = "DAY_MAX_TIME_THRESHOLD";
     protected static final String WEEK_TARGET_REACHED = "WEEK_TARGET_REACHED";
     protected static final String WEEK_MAX_TIME_THRESHOLD = "WEEK_MAX_TIME_THRESHOLD";
@@ -83,7 +88,7 @@ public class TimeRecConnector {
 
     protected void timeRecGetInfo(MessageEvent evt) {
         Intent intent = new Intent("com.dynamicg.timerecording.GET_INFO");
-        intent.putExtra(EXTRA_FLAG, FLAG_WEEKLY_DELTA + FLAG_MONTHLY_DELTA);
+        intent.putExtra(EXTRA_FLAG, FLAG_WEEKLY_DELTA + FLAG_MONTHLY_DELTA + FLAG_TOTAL_WEEK + FLAG_TOTAL_MONTH);
 
         sendIntent(intent, evt);
     }
