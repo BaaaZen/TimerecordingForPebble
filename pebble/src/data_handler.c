@@ -20,7 +20,7 @@ void data_clear_display_cache(void) {
 
 void data_update_display_cache(int cache_id, char *d_s, GColor d_c, char *t1_s, GColor t1_c, char *t2_s, GColor t2_c) {
   if(cache_id < 0 || cache_id >= DISPLAY_CACHE_SIZE_MAX) return;
-  
+
   strncpy(display_cache[cache_id].descr.s_text, d_s, STRUCT_BUF_LEN - 1);
   display_cache[cache_id].descr.s_text[STRUCT_BUF_LEN - 1] = '\0';
   display_cache[cache_id].descr.c_text = d_c;
@@ -28,11 +28,11 @@ void data_update_display_cache(int cache_id, char *d_s, GColor d_c, char *t1_s, 
   strncpy(display_cache[cache_id].time1.s_text, t1_s, STRUCT_BUF_LEN - 1);
   display_cache[cache_id].time1.s_text[STRUCT_BUF_LEN - 1] = '\0';
   display_cache[cache_id].time1.c_text = t1_c;
-  
+
   strncpy(display_cache[cache_id].time2.s_text, t2_s, STRUCT_BUF_LEN - 1);
   display_cache[cache_id].time2.s_text[STRUCT_BUF_LEN - 1] = '\0';
   display_cache[cache_id].time2.c_text = t2_c;
-  
+
   display_cache[cache_id].enabled = true;
   if(display_cache_size == cache_id) {
     while(display_cache_size < DISPLAY_CACHE_SIZE_MAX) {
@@ -46,7 +46,7 @@ void data_update_display_cache(int cache_id, char *d_s, GColor d_c, char *t1_s, 
 
   if(display_cache_size > 0) data_update_gui();
 }
-  
+
 void data_update_title_cache(char *d_s, GColor d_c) {
   strncpy(title_cache.s_text, d_s, STRUCT_BUF_LEN - 1);
   title_cache.s_text[STRUCT_BUF_LEN - 1] = '\0';
@@ -57,14 +57,14 @@ void data_update_title_cache(char *d_s, GColor d_c) {
 
 void data_update_checked_in_state(bool ci) {
   checked_in = ci;
-  
+
   data_update_gui();
 }
 
 void data_nav_next(void) {
   if(display_cache_size > 0) {
     display_id = (display_id + 1) % display_cache_size;
-   
+
     data_update_gui();
   }
 }
@@ -86,7 +86,7 @@ static void data_update_gui(void) {
     // no data available
     gui_update_upper_time("", "", GColorBlack, "", GColorBlack);
   }
-  
+
   bool lower_set = false;
   if(display_cache_size > 0) {
     // we have data for lower display
@@ -109,5 +109,5 @@ void data_init(void) {
 }
 
 void data_deinit(void) {
-	
+
 }

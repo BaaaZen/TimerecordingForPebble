@@ -32,7 +32,7 @@ void gui_update_upper_time(const char *t_descr, const char *t_time1, GColor c_ti
   c_time_u2 = c_time2;
   strncpy(buf_time_u2, t_time2, 6);
   buf_time_u1[6] = '\0';
-  
+
   layer_mark_dirty(window_get_root_layer(s_main_window));
 }
 
@@ -45,7 +45,7 @@ void gui_update_lower_time(const char *t_descr, const char *t_time1, GColor c_ti
   c_time_l2 = c_time2;
   strncpy(buf_time_l2, t_time2, 6);
   buf_time_l1[6] = '\0';
-  
+
   layer_mark_dirty(window_get_root_layer(s_main_window));
 }
 
@@ -54,9 +54,9 @@ void gui_update_common(bool b_started, const char *t_descr, GColor c_descr_i, GC
   buf_descr[29] = '\0';
   c_descr = c_descr_i;
   c_bg = c_bg_i;
-  
+
   started = b_started;
-  
+
   gui_ab_update_icons();
   layer_mark_dirty(window_get_root_layer(s_main_window));
 }
@@ -97,13 +97,13 @@ static void gui_layer_content_update(Layer *layer, GContext *ctx) {
   text_layer_set_text(s_text_upper_time1, buf_time_u1);
   text_layer_set_text_color(s_text_upper_time2, c_time_u2);
   text_layer_set_text(s_text_upper_time2, buf_time_u2);
-  
+
   text_layer_set_text(s_text_lower_descr, buf_time_l_descr);
   text_layer_set_text_color(s_text_lower_time1, c_time_l1);
   text_layer_set_text(s_text_lower_time1, buf_time_l1);
   text_layer_set_text_color(s_text_lower_time2, c_time_l2);
   text_layer_set_text(s_text_lower_time2, buf_time_l2);
-  
+
   text_layer_set_text_color(s_text_center_descr, c_descr);
   text_layer_set_text(s_text_center_descr, buf_descr);
 }
@@ -111,8 +111,8 @@ static void gui_layer_content_update(Layer *layer, GContext *ctx) {
 static void gui_layer_bg_update(Layer *layer, GContext *ctx) {
   graphics_context_set_fill_color(ctx, c_bg);
   graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
-  
-  int width = layer_get_frame(layer).size.w; 
+
+  int width = layer_get_frame(layer).size.w;
   int height = layer_get_frame(layer).size.h;
 
   graphics_context_set_stroke_color(ctx, PBL_IF_COLOR_ELSE(GColorLightGray, GColorBlack));
@@ -129,14 +129,14 @@ static void gui_main_window_load(Window *window) {
   /* root layer */
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
-  
+
   /* create action bar */
   s_action_bar = action_bar_layer_create();
   action_bar_layer_add_to_window(s_action_bar, window);
   action_bar_layer_set_background_color(s_action_bar, PBL_IF_COLOR_ELSE(GColorTiffanyBlue, GColorWhite));
   action_bar_layer_set_click_config_provider(s_action_bar, gui_ab_click_provider);
   gui_ab_update_icons();
-  
+
   bounds.size.w -= ACTION_BAR_WIDTH;
 
   /* background layer */
@@ -148,7 +148,7 @@ static void gui_main_window_load(Window *window) {
   s_layer_content = layer_create(bounds);
   layer_set_update_proc(s_layer_content, gui_layer_content_update);
   layer_add_child(window_layer, s_layer_content);
-  
+
   int kern = 2;
   /* text layer center */
   int ch = 22;
@@ -158,7 +158,7 @@ static void gui_main_window_load(Window *window) {
   text_layer_set_text_alignment(s_text_center_descr, GTextAlignmentCenter);
   text_layer_set_text(s_text_center_descr, "");
   layer_add_child(s_layer_content, text_layer_get_layer(s_text_center_descr));
-  
+
   /* text layers upper */
   /*   description */
   int dh = 22;
@@ -213,16 +213,16 @@ static void gui_main_window_load(Window *window) {
 
 static void gui_main_window_unload(Window *window) {
   text_layer_destroy(s_text_center_descr);
-  
+
   text_layer_destroy(s_text_upper_descr);
   text_layer_destroy(s_text_upper_time1);
   text_layer_destroy(s_text_upper_time2);
   text_layer_destroy(s_text_lower_descr);
   text_layer_destroy(s_text_lower_time1);
   text_layer_destroy(s_text_lower_time2);
-  
+
   action_bar_layer_destroy(s_action_bar);
-  
+
   layer_destroy(s_layer_content);
   layer_destroy(s_layer_bg);
 }
@@ -232,14 +232,14 @@ void gui_main_init(void) {
   s_ab_icon_check_out = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_CHECK_OUT);
   s_ab_icon_task = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_TASK);
   s_ab_icon_switch = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_SWITCH);
-  
+
   s_main_window = window_create();
   window_set_window_handlers(s_main_window, (WindowHandlers) {
     .load = gui_main_window_load,
     .unload = gui_main_window_unload
   });
   window_stack_push(s_main_window, true);
-  
+
   gui_update_upper_time("", "", GColorBlack, "", GColorBlack);
   gui_update_lower_time("", "", GColorBlack, "", GColorBlack);
   gui_update_common(false, "Laden ...", GColorBlack, GColorWhite);
@@ -250,9 +250,9 @@ void gui_main_init(void) {
 
 void gui_main_deinit(void) {
 	tick_timer_service_unsubscribe();
-	
+
   window_destroy(s_main_window);
-  
+
   gbitmap_destroy(s_ab_icon_check_in);
   gbitmap_destroy(s_ab_icon_check_out);
   gbitmap_destroy(s_ab_icon_task);
