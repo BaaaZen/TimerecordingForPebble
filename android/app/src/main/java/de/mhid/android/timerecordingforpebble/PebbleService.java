@@ -102,7 +102,7 @@ public class PebbleService extends Service {
         if(bundle == null) return;
 
         /* create first package: checked in and main description */
-        PebbleDictionary dict = new PebbleDictionary();
+        PebbleDictionary dict1 = new PebbleDictionary();
 
         boolean commonCheckedIn = bundle.getBoolean(TimeRecConnector.CHECKED_IN);
         String commonStatus = "";
@@ -119,61 +119,62 @@ public class PebbleService extends Service {
             commonStatus = "(ausgestempelt)";
             commonColor = PebbleMessenger.MESSAGE_COLOR_LIGHTGRAY;
         }
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CHECKED_IN, commonCheckedIn ? (byte)1 : 0);
-        dict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_TEXT, commonStatus);
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_COLOR, commonColor);
+        dict1.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CHECKED_IN, commonCheckedIn ? (byte)1 : 0);
+        dict1.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_TEXT, commonStatus);
+        dict1.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_COLOR, commonColor);
         /* send first package */
-        messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict);
+        messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict1);
 
         String time;
         /* create face 1: work time day/week */
-        dict = new PebbleDictionary();
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_ID, (byte)0);
+        PebbleDictionary dict2 = new PebbleDictionary();
+        dict2.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_ID, (byte)0);
 
-        dict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT, "Arbeitsz. Tag/Woche");
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
+        dict2.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT, "Arbeitsz. Tag/Woche");
+        dict2.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
 
-        dict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_TEXT, bundle.getString(TimeRecConnector.TIME_TOTAL_FORMATTED));
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
+        dict2.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_TEXT, bundle.getString(TimeRecConnector.TIME_TOTAL_FORMATTED));
+        dict2.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
 
-        dict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_TEXT, bundle.getString(TimeRecConnector.TIME_TOTAL_WEEK_FORMATTED));
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
+        dict2.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_TEXT, bundle.getString(TimeRecConnector.TIME_TOTAL_WEEK_FORMATTED));
+        dict2.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
         /* send face 1 */
-        messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict);
+        messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict2);
 
         /* create face 2: daily time left */
-        dict = new PebbleDictionary();
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_ID, (byte)1);
+        PebbleDictionary dict3 = new PebbleDictionary();
+        dict3.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_ID, (byte)1);
 
-        dict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT, "Delta Tag");
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
+        dict3.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT, "Delta Tag");
+        dict3.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
 
         time = bundle.getString(TimeRecConnector.DELTA_DAY_FORMATTED);
-        dict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_TEXT, time);
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_COLOR, getColorForTimevalue(time));
+        dict3.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_TEXT, time);
+        dict3.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_COLOR, getColorForTimevalue(time));
 
         time = bundle.getString(TimeRecConnector.DAY_TARGET_REACHED_FORMATTED_SHORT);
         if(time == null) time = "";
-        dict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_TEXT, time);
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
+        dict3.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_TEXT, time);
+        dict3.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
         /* send face 2 */
-        messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict);
+        messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict3);
 
         /* create face 3: weekly time left */
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_ID, (byte)2);
+        PebbleDictionary dict4 = new PebbleDictionary();
+        dict4.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_ID, (byte)2);
 
-        dict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT, "Delta Woche");
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
+        dict4.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT, "Delta Woche");
+        dict4.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
 
         time = bundle.getString(TimeRecConnector.WTD_DELTA_DAY_FORMATTED);
-        dict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_TEXT, time);
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_COLOR, getColorForTimevalue(time));
+        dict4.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_TEXT, time);
+        dict4.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_COLOR, getColorForTimevalue(time));
 
         time = bundle.getString(TimeRecConnector.DELTA_WEEK_FORMATTED);
-        dict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_TEXT, time);
-        dict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR, getColorForTimevalue(time));
+        dict4.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_TEXT, time);
+        dict4.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR, getColorForTimevalue(time));
         /* send face 3 */
-        messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict);
+        messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict4);
     }
 
 }
