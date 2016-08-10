@@ -228,6 +228,20 @@ static void gui_main_window_unload(Window *window) {
 }
 
 void gui_main_init(void) {
+  /* fetch locale */
+  char *sys_locale = setlocale(LC_ALL, "");
+
+  char *loading_title;
+  if (strcmp("de_DE", sys_locale) == 0) {
+    loading_title = "Laden ...";
+  } else if (strcmp("en_EN", sys_locale) == 0) {
+    loading_title = "Loading ...";
+  } else if (strcmp("fr_FR", sys_locale) == 0) {
+    loading_title = "Charger ...";
+  } else {
+    /* more translations are welcome :-) */
+    loading_title = "Loading ...";
+  }
   s_ab_icon_check_in = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_CHECK_IN);
   s_ab_icon_check_out = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_CHECK_OUT);
   s_ab_icon_task = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_TASK);
@@ -242,7 +256,7 @@ void gui_main_init(void) {
 
   gui_update_upper_time("", "", GColorBlack, "", GColorBlack);
   gui_update_lower_time("", "", GColorBlack, "", GColorBlack);
-  gui_update_common(false, "Laden ...", GColorBlack, GColorWhite);
+  gui_update_common(false, loading_title, GColorBlack, GColorWhite);
 
 	/* update data every minute */
 	tick_timer_service_subscribe(MINUTE_UNIT, gui_tick_handler);
