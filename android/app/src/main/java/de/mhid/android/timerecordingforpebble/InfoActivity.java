@@ -7,8 +7,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-public class InfoActivity extends AppCompatActivity {
+import com.getpebble.android.kit.PebbleKit;
 
+public class InfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,5 +25,10 @@ public class InfoActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+
+    public void onClickButtonStartPebbleApp(View view) {
+        PebbleKit.startAppOnPebble(this, PebbleMessenger.APP_UUID);
     }
 }

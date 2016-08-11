@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class PebbleMessenger {
-    private final UUID APP_UUID = UUID.fromString("43157217-0040-4514-a747-0042745874fd");
+    protected final static UUID APP_UUID = UUID.fromString("43157217-0040-4514-a747-0042745874fd");
 
     protected final static byte MESSAGE_COLOR_BLACK = 0;
     protected final static byte MESSAGE_COLOR_WHITE = 1;

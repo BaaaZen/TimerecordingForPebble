@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Zeiterfassung für Pebble</string>
+    <string name="tr4p_main_info">Dies ist die Companion-App zur Steuerung der Zeiterfassung von deiner Pebble Smartwatch aus. Diese App arbeitet nur im Hintergrund. Du kannst sie einfach wieder beenden. Sie wird selber aktiv, sobald du die Pebble App auf deiner Uhr startest.</string>
+    <string name="tr4p_button_settings">Einstellungen</string>
+    <string name="tr4p_button_start_pebble_app">Pebble-App starten</string>
 </resources>

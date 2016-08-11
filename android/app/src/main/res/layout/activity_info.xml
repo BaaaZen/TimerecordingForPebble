@@ -13,11 +13,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Dies ist die Companion-App zur Steuerung der Zeiterfassung von deiner Pebble Smartwatch aus. Diese App arbeitet nur im Hintergrund. Du kannst sie einfach wieder beenden. Sie wird selber aktiv, sobald du die Pebble App auf deiner Uhr startest."
-        android:id="@+id/info_text"
+        android:text="@string/tr4p_main_info"
+        android:id="@+id/infoText"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/buttonStartApp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tr4p_button_start_pebble_app"
+        android:id="@+id/buttonStartApp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentStart="true"
+        android:enabled="true"
+        android:onClick="onClickButtonStartPebbleApp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tr4p_button_settings"
+        android:id="@+id/buttonSettings"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:enabled="false" />
 
 </RelativeLayout>

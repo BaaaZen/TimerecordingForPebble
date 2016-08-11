@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Timerecording for Pebble</string>
     <string name="tr4p_main_info">This is the companion app to control Time Recording from your Pebble smartwatch. This app works only in background. You can simplay quit this screen. The app gets active when you open the Pebble app on your watch.</string>
-    <string name="tr4p_button_start_pebble_app">Start Pebble app</string>
     <string name="tr4p_button_settings">Settings</string>
+    <string name="tr4p_button_start_pebble_app">Start Pebble app</string>
 </resources>
