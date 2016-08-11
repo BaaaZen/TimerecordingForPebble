@@ -64,7 +64,8 @@ void gui_update_common(bool b_started, const char *t_descr, GColor c_descr_i, GC
 static void gui_ab_update_icons(void) {
   if(started) {
     action_bar_layer_set_icon(s_action_bar, BUTTON_ID_UP, s_ab_icon_check_out);
-    action_bar_layer_set_icon(s_action_bar, BUTTON_ID_SELECT, s_ab_icon_task);
+    action_bar_layer_clear_icon(s_action_bar, BUTTON_ID_SELECT);
+    /* action_bar_layer_set_icon(s_action_bar, BUTTON_ID_SELECT, s_ab_icon_task); */
     action_bar_layer_set_icon(s_action_bar, BUTTON_ID_DOWN, s_ab_icon_switch);
   } else {
     action_bar_layer_set_icon(s_action_bar, BUTTON_ID_UP, s_ab_icon_check_in);
