@@ -1,5 +1,5 @@
 {
-    "author": "Mirko Hansen Internetdienstleistungen",
+    "author": "BaaaZen (Mirko Hansen)",
     "dependencies": {},
     "keywords": [],
     "name": "timerecording-for-pebble",
@@ -50,5 +50,5 @@
             "watchface": false
         }
     },
-    "version": "0.1.0"
+    "version": "1.0.0"
 }

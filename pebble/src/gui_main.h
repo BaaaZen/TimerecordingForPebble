@@ -1,3 +1,15 @@
+/*
+  Copyright 2016 Mirko Hansen
+
+  This file is part of Timerecording for Pebble
+  http://www.github.com/BaaaZen/TimerecordingForPebble
+
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+*/
+
 #pragma once
 void gui_main_init(void);
 void gui_main_deinit(void);
