@@ -34,8 +34,11 @@ static char buf_time_l1[7], buf_time_l2[7], buf_time_l_descr[25];
 static GColor c_time_l1, c_time_l2;
 
 static bool started = false;
+static bool gui_inited = false;
 
 void gui_update_upper_time(const char *t_descr, const char *t_time1, GColor c_time1, const char *t_time2, GColor c_time2) {
+  if(!gui_inited) return;
+
   strncpy(buf_time_u_descr, t_descr, 24);
   buf_time_u_descr[24] = '\0';
   c_time_u1 = c_time1;
@@ -49,6 +52,8 @@ void gui_update_upper_time(const char *t_descr, const char *t_time1, GColor c_ti
 }
 
 void gui_update_lower_time(const char *t_descr, const char *t_time1, GColor c_time1, const char *t_time2, GColor c_time2) {
+  if(!gui_inited) return;
+
   strncpy(buf_time_l_descr, t_descr, 24);
   buf_time_l_descr[24] = '\0';
   c_time_l1 = c_time1;
@@ -62,6 +67,8 @@ void gui_update_lower_time(const char *t_descr, const char *t_time1, GColor c_ti
 }
 
 void gui_update_common(bool b_started, const char *t_descr, GColor c_descr_i, GColor c_bg_i) {
+  if(!gui_inited) return;
+
   strncpy(buf_descr, t_descr, 29);
   buf_descr[29] = '\0';
   c_descr = c_descr_i;
@@ -276,9 +283,13 @@ void gui_main_init(void) {
 
   /* update data every minute */
   tick_timer_service_subscribe(MINUTE_UNIT, gui_tick_handler);
+
+  gui_inited = true;
 }
 
 void gui_main_deinit(void) {
+  gui_inited = false;
+
   /* stop updater */
   tick_timer_service_unsubscribe();
 
