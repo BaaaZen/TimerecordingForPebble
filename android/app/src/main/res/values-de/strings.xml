@@ -4,4 +4,11 @@
     <string name="tr4p_main_info">Dies ist die Companion-App zur Steuerung der Zeiterfassung von deiner Pebble Smartwatch aus. Diese App arbeitet nur im Hintergrund. Du kannst sie einfach wieder beenden. Sie wird selber aktiv, sobald du die Pebble App auf deiner Uhr startest.</string>
     <string name="tr4p_button_settings">Einstellungen</string>
     <string name="tr4p_button_start_pebble_app">Pebble-App starten</string>
+    <string name="tr4p_pebble_face_title_workingtime_day_week">Arbeitsz. Tag/Woche</string>
+    <string name="tr4p_pebble_task">Task</string>
+    <string name="tr4p_pebble_no_task">kein Task</string>
+    <string name="tr4p_pebble_checked_out">ausgestempelt</string>
+    <string name="tr4p_pebble_face_title_delta_day">Delta Tag</string>
+    <string name="tr4p_pebble_face_title_delta_week">Delta Woche</string>
+    <string name="tr4p_pebble_no_data">keine Daten</string>
 </resources>

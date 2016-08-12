@@ -111,7 +111,6 @@ public class PebbleService extends Service {
     }
 
     private void genResponseStatus(Bundle bundle) {
-        // TODO: TRANSLATIONS!
         if(bundle == null) {
             // we didn't receive any data from time recording app
             // -> clear all data on pebble
@@ -119,7 +118,7 @@ public class PebbleService extends Service {
             noDataDict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_CLEARALL, (byte)1);
 
             // -> send warning state
-            String status = "(keine Daten)";
+            String status = "(" + getString(R.string.tr4p_pebble_no_data) + ")";
             noDataDict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CHECKED_IN, (byte)0);
             noDataDict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_TEXT, status);
             noDataDict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_COLOR, PebbleMessenger.MESSAGE_COLOR_RED);
@@ -139,12 +138,12 @@ public class PebbleService extends Service {
             /* user is checked in */
             String taskName = bundle.getString(TimeRecConnector.TASK);
             if(taskName == null || taskName.isEmpty())
-                taskName = "(unbekannt)";
-            commonStatus = "Task: " + taskName;
+                taskName = "(" + getString(R.string.tr4p_pebble_no_task) + ")";
+            commonStatus = getString(R.string.tr4p_pebble_task) + ": " + taskName;
             commonColor = PebbleMessenger.MESSAGE_COLOR_BLACK;
         } else {
             /* not checked in */
-            commonStatus = "(ausgestempelt)";
+            commonStatus = "(" + getString(R.string.tr4p_pebble_checked_out) + ")";
             commonColor = PebbleMessenger.MESSAGE_COLOR_LIGHTGRAY;
         }
         dict1.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CHECKED_IN, commonCheckedIn ? (byte)1 : 0);
@@ -158,7 +157,7 @@ public class PebbleService extends Service {
         PebbleDictionary dict2 = new PebbleDictionary();
         dict2.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_ID, (byte)0);
 
-        dict2.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT, "Arbeitsz. Tag/Woche");
+        dict2.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT, getString(R.string.tr4p_pebble_face_title_workingtime_day_week));
         dict2.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
 
         dict2.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME1_TEXT, bundle.getString(TimeRecConnector.TIME_TOTAL_FORMATTED));
@@ -173,7 +172,7 @@ public class PebbleService extends Service {
         PebbleDictionary dict3 = new PebbleDictionary();
         dict3.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_ID, (byte)1);
 
-        dict3.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT, "Delta Tag");
+        dict3.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT, getString(R.string.tr4p_pebble_face_title_delta_day));
         dict3.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
 
         time = bundle.getString(TimeRecConnector.DELTA_DAY_FORMATTED);
@@ -191,7 +190,7 @@ public class PebbleService extends Service {
         PebbleDictionary dict4 = new PebbleDictionary();
         dict4.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_ID, (byte)2);
 
-        dict4.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT, "Delta Woche");
+        dict4.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT, getString(R.string.tr4p_pebble_face_title_delta_week));
         dict4.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
 
         time = bundle.getString(TimeRecConnector.WTD_DELTA_DAY_FORMATTED);
