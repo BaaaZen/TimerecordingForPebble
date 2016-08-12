@@ -111,7 +111,23 @@ public class PebbleService extends Service {
     }
 
     private void genResponseStatus(Bundle bundle) {
-        if(bundle == null) return;
+        // TODO: TRANSLATIONS!
+        if(bundle == null) {
+            // we didn't receive any data from time recording app
+            // -> clear all data on pebble
+            PebbleDictionary noDataDict = new PebbleDictionary();
+            noDataDict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_CLEARALL, (byte)1);
+
+            // -> send warning state
+            String status = "(keine Daten)";
+            noDataDict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CHECKED_IN, (byte)0);
+            noDataDict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_TEXT, status);
+            noDataDict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_COLOR, PebbleMessenger.MESSAGE_COLOR_RED);
+
+            messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, noDataDict);
+
+            return;
+        }
 
         /* create first package: checked in and main description */
         PebbleDictionary dict1 = new PebbleDictionary();

@@ -54,6 +54,8 @@ public class PebbleMessenger {
     protected final static int MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_TEXT = 10;
     protected final static int MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR = 11;
 
+    protected final static int MESSAGE_KEY_STATUS_RESPONSE_FACE_CLEARALL = 12;
+
     private PebbleKit.PebbleDataReceiver dataReceiver = null;
     private PebbleKit.PebbleAckReceiver ackReceiver = null;
     private PebbleKit.PebbleNackReceiver nackReceiver = null;
