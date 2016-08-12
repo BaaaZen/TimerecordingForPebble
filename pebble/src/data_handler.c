@@ -24,10 +24,13 @@ static int display_id = 0;
 
 void data_clear_display_cache(void) {
   /* clean up display cache */
+  display_id = 0;
   display_cache_size = 0;
-  for(int i=0; i<5; i++) {
+  for(int i=0; i<DISPLAY_CACHE_SIZE_MAX; i++) {
     display_cache[i].enabled = false;
   }
+
+  data_update_gui();
 }
 
 void data_update_display_cache(int cache_id, char *d_s, GColor d_c, char *t1_s, GColor t1_c, char *t2_s, GColor t2_c) {
@@ -51,8 +54,8 @@ void data_update_display_cache(int cache_id, char *d_s, GColor d_c, char *t1_s, 
       if(display_cache[display_cache_size].enabled) {
         display_cache_size++;
       } else {
-				break;
-			}
+        break;
+      }
     }
   }
 
@@ -116,8 +119,7 @@ static void data_update_gui(void) {
 }
 
 void data_init(void) {
-	data_clear_display_cache();
-	display_id = 0;
+  data_clear_display_cache();
 }
 
 void data_deinit(void) {

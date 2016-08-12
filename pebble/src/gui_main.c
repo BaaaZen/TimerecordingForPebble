@@ -91,7 +91,7 @@ static void gui_ab_onclick_up(ClickRecognizerRef recognizer, void *context) {
 }
 
 static void gui_ab_onclick_select(ClickRecognizerRef recognizer, void *context) {
-	/* TODO: menu for task selector */
+  /* TODO: menu for task selector */
 }
 
 static void gui_ab_onclick_down(ClickRecognizerRef recognizer, void *context) {
@@ -135,7 +135,7 @@ static void gui_layer_bg_update(Layer *layer, GContext *ctx) {
 }
 
 static void gui_tick_handler(struct tm *time_now, TimeUnits changed) {
-	msg_cmd_fetch_status();
+  msg_cmd_fetch_status();
 }
 
 static void gui_main_window_load(Window *window) {
@@ -241,9 +241,8 @@ static void gui_main_window_unload(Window *window) {
 }
 
 void gui_main_init(void) {
-  /* fetch locale */
+  /* fetch locales */
   char *sys_locale = setlocale(LC_ALL, "");
-
   char *loading_title;
   if (strcmp("de_DE", sys_locale) == 0) {
     loading_title = "Laden ...";
@@ -255,11 +254,14 @@ void gui_main_init(void) {
     /* more translations are welcome :-) */
     loading_title = "Loading ...";
   }
+
+  /* import icons */
   s_ab_icon_check_in = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_CHECK_IN);
   s_ab_icon_check_out = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_CHECK_OUT);
   s_ab_icon_task = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_TASK);
   s_ab_icon_switch = gbitmap_create_with_resource(RESOURCE_ID_AB_BUTTON_SWITCH);
 
+  /* create main window */
   s_main_window = window_create();
   window_set_window_handlers(s_main_window, (WindowHandlers) {
     .load = gui_main_window_load,
@@ -267,19 +269,23 @@ void gui_main_init(void) {
   });
   window_stack_push(s_main_window, true);
 
+  /* clear/init data handler */
   gui_update_upper_time("", "", GColorBlack, "", GColorBlack);
   gui_update_lower_time("", "", GColorBlack, "", GColorBlack);
   gui_update_common(false, loading_title, GColorBlack, GColorWhite);
 
-	/* update data every minute */
-	tick_timer_service_subscribe(MINUTE_UNIT, gui_tick_handler);
+  /* update data every minute */
+  tick_timer_service_subscribe(MINUTE_UNIT, gui_tick_handler);
 }
 
 void gui_main_deinit(void) {
-	tick_timer_service_unsubscribe();
+  /* stop updater */
+  tick_timer_service_unsubscribe();
 
+  /* destroy window */
   window_destroy(s_main_window);
 
+  /* destroy icons */
   gbitmap_destroy(s_ab_icon_check_in);
   gbitmap_destroy(s_ab_icon_check_out);
   gbitmap_destroy(s_ab_icon_task);

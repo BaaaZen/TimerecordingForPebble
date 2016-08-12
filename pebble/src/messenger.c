@@ -27,27 +27,27 @@ static void msg_inbox_received_callback(DictionaryIterator *iter, void *context)
 }
 
 static GColor msg_parse_color(uint8_t c) {
-  if(c == MESSAGE_COLOR_WHITE)
-    return GColorWhite;
-  else if(c == MESSAGE_COLOR_RED)
-    return GColorDarkCandyAppleRed;
-  else if(c == MESSAGE_COLOR_GREEN)
-    return GColorIslamicGreen;
-  else if(c == MESSAGE_COLOR_BLUE)
-    return GColorBlue;
-  else if(c == MESSAGE_COLOR_YELLOW)
-    return GColorYellow;
-  else if(c == MESSAGE_COLOR_ORANGE)
-    return GColorOrange;
-  else if(c == MESSAGE_COLOR_DARKGRAY)
-    return GColorDarkGray;
-  else if(c == MESSAGE_COLOR_LIGHTGRAY)
-    return GColorLightGray;
-  else
-    return GColorBlack;
+  if(c == MESSAGE_COLOR_WHITE) return GColorWhite;
+#ifdef PBL_COLOR
+  /* only use color if pebble supports it */
+  else if(c == MESSAGE_COLOR_RED) return GColorDarkCandyAppleRed;
+  else if(c == MESSAGE_COLOR_GREEN) return GColorIslamicGreen;
+  else if(c == MESSAGE_COLOR_BLUE) return GColorBlue;
+  else if(c == MESSAGE_COLOR_YELLOW) return GColorYellow;
+  else if(c == MESSAGE_COLOR_ORANGE) return GColorOrange;
+  else if(c == MESSAGE_COLOR_DARKGRAY) return GColorDarkGray;
+  else if(c == MESSAGE_COLOR_LIGHTGRAY) return GColorLightGray;
+#endif
+  else return GColorBlack;
 }
 
 static void msg_parse_cmd_status_response(DictionaryIterator *iter) {
+  /* clear all data from data handler */
+  Tuple *t_f_clearall = dict_find(iter, MESSAGE_KEY_STATUS_RESPONSE_FACE_CLEARALL);
+  if(t_f_clearall) {
+    if(t_f_clearall->value->uint8 > 0) data_clear_display_cache();
+  }
+
   /* checked in state */
   Tuple *t_ci = dict_find(iter, MESSAGE_KEY_STATUS_RESPONSE_STATUS_CHECKED_IN);
   if(t_ci) {
@@ -71,8 +71,8 @@ static void msg_parse_cmd_status_response(DictionaryIterator *iter) {
   Tuple *t_f_t2_c = dict_find(iter, MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR);
   if(t_f_id && t_f_d_s && t_f_d_c && t_f_t1_s && t_f_t1_c && t_f_t2_s && t_f_t2_c) {
     data_update_display_cache(t_f_id->value->uint8, t_f_d_s->value->cstring, msg_parse_color(t_f_d_c->value->uint8),
-                              t_f_t1_s->value->cstring, msg_parse_color(t_f_t1_c->value->uint8),
-                              t_f_t2_s->value->cstring, msg_parse_color(t_f_t2_c->value->uint8));
+      t_f_t1_s->value->cstring, msg_parse_color(t_f_t1_c->value->uint8),
+      t_f_t2_s->value->cstring, msg_parse_color(t_f_t2_c->value->uint8));
   }
 }
 
