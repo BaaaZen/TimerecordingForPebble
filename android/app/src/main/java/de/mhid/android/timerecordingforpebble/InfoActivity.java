@@ -43,4 +43,8 @@ public class InfoActivity extends AppCompatActivity {
     public void onClickButtonStartPebbleApp(View view) {
         PebbleKit.startAppOnPebble(this, PebbleMessenger.APP_UUID);
     }
+
+    public void onClickButtonSettings(View view) {
+
+    }
 }

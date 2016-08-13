@@ -37,6 +37,7 @@
         android:id="@+id/buttonSettings"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:enabled="false" />
+        android:enabled="false"
+        android:onClick="onClickButtonSettings" />
 
 </RelativeLayout>
