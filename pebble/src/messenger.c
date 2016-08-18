@@ -138,6 +138,29 @@ void msg_cmd_action_punch(void) {
   }
 }
 
+void msg_cmd_fetch_tasks(void) {
+  // Declare the dictionary's iterator
+  DictionaryIterator *out_msg;
+
+  // Prepare the outbox buffer for this message
+  AppMessageResult result = app_message_outbox_begin(&out_msg);
+  if(result == APP_MSG_OK) {
+    // Add an item to ask for weather data
+    dict_write_uint8(out_msg, MESSAGE_KEY_CMD, MESSAGE_CMD_TASKS_REQUEST);
+
+    // Send this message
+    result = app_message_outbox_send();
+
+    // Check the result
+    if(result != APP_MSG_OK) {
+      APP_LOG(APP_LOG_LEVEL_ERROR, "Error sending the outbox: %d", (int)result);
+    }
+  } else {
+    // The outbox cannot be used right now
+    APP_LOG(APP_LOG_LEVEL_ERROR, "Error preparing the outbox: %d", (int)result);
+  }
+}
+
 
 void msg_init(void) {
   const int inbound_size = 256;

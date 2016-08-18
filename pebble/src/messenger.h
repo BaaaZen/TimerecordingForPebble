@@ -25,6 +25,7 @@ void msg_init(void);
 void msg_deinit(void);
 void msg_cmd_fetch_status(void);
 void msg_cmd_action_punch(void);
+void msg_cmd_fetch_tasks(void);
 
 
 #define MESSAGE_COLOR_BLACK 0
@@ -40,13 +41,14 @@ void msg_cmd_action_punch(void);
 #define MESSAGE_CMD_STATUS_REQUEST 1
 #define MESSAGE_CMD_STATUS_RESPONSE 2
 #define MESSAGE_CMD_ACTION_PUNCH 3
+#define MESSAGE_CMD_TASKS_REQUEST 4
+#define MESSAGE_CMD_TASKS_RESPONSE 5
 
 #define MESSAGE_KEY_CMD 1
 
 #define MESSAGE_KEY_STATUS_RESPONSE_STATUS_CHECKED_IN 2
 #define MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_TEXT 3
 #define MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_COLOR 4
-
 
 #define MESSAGE_KEY_STATUS_RESPONSE_FACE_ID 5
 #define MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT 6

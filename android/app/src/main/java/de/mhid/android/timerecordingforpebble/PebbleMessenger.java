@@ -39,6 +39,8 @@ public class PebbleMessenger {
     protected final static int MESSAGE_CMD_STATUS_REQUEST = 1;
     protected final static int MESSAGE_CMD_STATUS_RESPONSE = 2;
     protected final static int MESSAGE_CMD_ACTION_PUNCH = 3;
+    protected final static int MESSAGE_CMD_TASKS_REQUEST = 4;
+    protected final static int MESSAGE_CMD_TASKS_RESPONSE = 5;
 
     protected final static int MESSAGE_KEY_CMD = 1;
 
