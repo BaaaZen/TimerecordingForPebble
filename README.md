@@ -5,6 +5,9 @@ The Pebble app is available in the [Pebble App-Store](https://apps.getpebble.com
 
 
 ## Changelog
+###### Version 1.0.1
+* Crash fixed in Android app (Thanks to Martin)
+
 ###### Version 1.0.0
 * First release
 
