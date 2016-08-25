@@ -4,6 +4,13 @@
     "keywords": [],
     "name": "timerecording-for-pebble",
     "pebble": {
+        "appKeys": {
+          "JS_KEY_CMD": 1001,
+          "JS_KEY_TLPIN_ID": 1002,
+          "JS_KEY_TLPIN_TYPE": 1003,
+          "JS_KEY_TLPIN_TIME": 1004,
+          "JS_KEY_TLPIN_NAME": 1005
+        },
         "capabilities": [
             ""
         ],
