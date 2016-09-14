@@ -26,6 +26,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class PebbleMessenger {
     protected final static UUID APP_UUID = UUID.fromString("43157217-0040-4514-a747-0042745874fd");
 
+    /* Pebble native app communication */
     protected final static byte MESSAGE_COLOR_BLACK = 0;
     protected final static byte MESSAGE_COLOR_WHITE = 1;
     protected final static byte MESSAGE_COLOR_RED = 2;
@@ -55,6 +56,17 @@ public class PebbleMessenger {
     protected final static int MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR = 11;
 
     protected final static int MESSAGE_KEY_STATUS_RESPONSE_FACE_CLEARALL = 12;
+
+    /* JS communication */
+    protected final static int JS_CMD_SET_PIN = 1;
+    protected final static int JS_CMD_DEL_PIN = 2; /* not implemented yet! */
+
+    protected final static int JS_KEY_CMD = 1001;
+    protected final static int JS_KEY_TLPIN_ID = 1002;
+    protected final static int JS_KEY_TLPIN_TYPE = 1003;
+    protected final static int JS_KEY_TLPIN_TIME = 1004;
+    protected final static int JS_KEY_TLPIN_NAME = 1005;
+
 
     private PebbleKit.PebbleDataReceiver dataReceiver = null;
     private PebbleKit.PebbleAckReceiver ackReceiver = null;
