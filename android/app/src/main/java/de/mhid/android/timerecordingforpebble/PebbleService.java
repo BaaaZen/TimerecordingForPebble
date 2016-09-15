@@ -31,9 +31,16 @@ public class PebbleService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        /* register pebble message events */
         initEvents();
+
+        /* init connector for time recording */
         timeRec = new TimeRecConnector(this);
+
+        /* init pebble messenger */
         messenger.initReceiver(this);
+
         Log.d(this.getClass().getName(), "onCreate()");
     }
 
@@ -48,8 +55,16 @@ public class PebbleService extends Service {
     @Override
     public void onDestroy() {
         Log.d(this.getClass().getName(), "onDestroy()");
+
+        /* destroy pebble messenger */
         messenger.deinitReceiver();
-        timeRec = null;
+
+        /* destroy connector for time recording */
+        if(timeRec != null) {
+            timeRec.destroy();
+            timeRec = null;
+        }
+
         super.onDestroy();
     }
 

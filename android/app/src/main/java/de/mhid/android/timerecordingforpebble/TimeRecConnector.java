@@ -16,6 +16,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -71,8 +72,39 @@ public class TimeRecConnector {
     protected static final String MTD_DELTA_DAY_FORMATTED = "MTD_DELTA_DAY_FORMATTED";
 
     private final Context context;
+    private BroadcastReceiverOnTimeRecDataChanged onTimeRecDataChangedReceiver = null;
+
     public TimeRecConnector(Context context) {
         this.context = context;
+
+        init();
+    }
+
+    private void init() {
+        /* init broadcast receiver for data change event from time recording */
+        IntentFilter filter = new IntentFilter("com.dynamicg.timerecording.DATA_CHANGED");
+        onTimeRecDataChangedReceiver = new BroadcastReceiverOnTimeRecDataChanged();
+        context.registerReceiver(onTimeRecDataChangedReceiver, filter);
+    }
+
+    protected void destroy() {
+        /* destroy broadcast receiver for data change event from time recording */
+        if(onTimeRecDataChangedReceiver != null) {
+            context.unregisterReceiver(onTimeRecDataChangedReceiver);
+            onTimeRecDataChangedReceiver = null;
+        }
+    }
+
+    protected void registerOnDataChangeEvent(DataChangeEventHandler eventHandler) {
+        if(onTimeRecDataChangedReceiver == null) return;
+
+        onTimeRecDataChangedReceiver.registerDataChangedEvent(eventHandler);
+    }
+
+    protected void unregisterOnDataChangeEvent(DataChangeEventHandler eventHandler) {
+        if(onTimeRecDataChangedReceiver == null) return;
+
+        onTimeRecDataChangedReceiver.unregisterDataChangedEvent(eventHandler);
     }
 
     private String getMatchingTimeRecPackage(String... packages) {
@@ -116,5 +148,9 @@ public class TimeRecConnector {
 
     interface MessageEvent {
         public abstract void messageReceived(Bundle bundle);
+    }
+
+    interface DataChangeEventHandler {
+        public abstract void onDataChanged();
     }
 }
