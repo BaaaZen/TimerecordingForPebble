@@ -27,6 +27,7 @@ public class TimeRecConnector {
     private static final int FLAG_FOR_WEAR_NOTIFICATION = 4;
     private static final int FLAG_TOTAL_WEEK = 8;
     private static final int FLAG_TOTAL_MONTH = 16;
+    private static final int FLAG_FORCE_LOAD = 32;
 
     protected static final String TIME_TOTAL_SECS = "TIME_TOTAL_SECS";
     protected static final String TIME_TOTAL_FORMATTED = "TIME_TOTAL_FORMATTED";
