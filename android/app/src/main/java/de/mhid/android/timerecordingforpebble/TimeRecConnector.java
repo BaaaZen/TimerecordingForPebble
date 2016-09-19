@@ -125,7 +125,7 @@ public class TimeRecConnector {
         BroadcastReceiver resultReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent resultIntent) {
-            if(evt != null) evt.messageReceived(this.getResultExtras(true));
+                if(evt != null) evt.messageReceived(this.getResultExtras(true));
             }
         };
         context.sendOrderedBroadcast(intent, null, resultReceiver, null, Activity.RESULT_OK, null, null);
