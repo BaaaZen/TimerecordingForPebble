@@ -24,6 +24,7 @@ import com.getpebble.android.kit.util.PebbleDictionary;
 public class PebbleService extends Service {
     private PebbleMessenger messenger = new PebbleMessenger();
     private TimeRecConnector timeRec = null;
+    private boolean firstTimelineUpdate = true;
 
     public PebbleService() {
     }
@@ -80,7 +81,8 @@ public class PebbleService extends Service {
             @Override
             public void messageReceived(PebbleMessenger msgr, PebbleDictionary dict) {
                 // send current status to pebble
-                evtRequestStatus(msgr, dict);
+                evtRequestStatus(firstTimelineUpdate, true, false);
+                firstTimelineUpdate = false;
             }
         });
         /* trigger punch */
@@ -88,26 +90,37 @@ public class PebbleService extends Service {
             @Override
             public void messageReceived(PebbleMessenger msgr, PebbleDictionary dict) {
                 // punch
-                evtActionPunch(msgr, dict);
+                evtActionPunch();
                 // after that send current status to pebble
-                evtRequestStatus(msgr, dict);
+                evtRequestStatus(true, true, true);
+            }
+        });
+
+        timeRec.registerOnDataChangeEvent(new TimeRecConnector.DataChangeEventHandler() {
+            @Override
+            public void onDataChanged() {
+                /* force update timeline after data changed */
+                evtRequestStatus(true, true, true);
             }
         });
     }
 
-    private void evtActionPunch(PebbleMessenger msgr, PebbleDictionary dict) {
+    private void evtActionPunch() {
+        /* event from pebble: punch */
         Log.d(this.getClass().getName(), "evtActionPunch()");
         timeRec.timeRecActionPunch(null);
     }
 
-    private void evtRequestStatus(PebbleMessenger msgr, PebbleDictionary dict) {
+    private void evtRequestStatus(final boolean sendStatusMessage, final boolean updateTimeline, final boolean forceUpdateTimeline) {
+        /* event from pebble: request status */
         Log.d(this.getClass().getName(), "evtRequestStatus()");
         TimeRecConnector.MessageEvent recvHandler = new TimeRecConnector.MessageEvent() {
             @Override
             public void messageReceived(Bundle bundle) {
                 Bundle result = bundle.getBundle("com.dynamicg.timerecording.RESULT");
 
-                genResponseStatus(result);
+                if(sendStatusMessage) genResponseStatus(result);
+                if(updateTimeline) genResponseTimeline(result, forceUpdateTimeline);
             }
         };
         timeRec.timeRecGetInfo(recvHandler);
@@ -128,6 +141,12 @@ public class PebbleService extends Service {
     private String getStringFromBundle(Bundle bundle, String key) {
         String str = bundle.getString(key);
         return str != null ? str : "";
+    }
+
+    private void genResponseTimeline(Bundle bundle, boolean forceUpdateTimeline) {
+        if(bundle == null) {
+            /* TODO: handle timeline actions */
+        }
     }
 
     private void genResponseStatus(Bundle bundle) {
