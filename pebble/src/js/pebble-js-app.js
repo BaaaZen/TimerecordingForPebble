@@ -47,7 +47,17 @@ Pebble.addEventListener('appmessage', function(msg) {
       }
 
     } else if(msg.payload['JS_KEY_CMD'] == C_JS_CMD_DEL_PIN) {
-      /* TODO */
+      // all necessary data present?
+      if(msg.payload['JS_KEY_TLPIN_ID']) {
+        var pin = {};
+        pin['id'] = msg.payload['JS_KEY_TLPIN_ID'];
+
+        timeline.deleteUserPin(pin, function(responseText) {
+          console.log('Deleting pin via Web-API results in: ' + responseText);
+        });
+      } else {
+        console.log('Incomplete DEL_PIN message!');
+      }
     }
 
   }
