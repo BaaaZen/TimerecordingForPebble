@@ -223,10 +223,24 @@ public class PebbleMessenger {
         }
     }
 
-    protected void sendMessage(int cmd, PebbleDictionary dict) {
+    protected void sendMessageToPebble(int cmd, PebbleDictionary dict) {
         // create a message for pebble and send it
         if(dict == null) dict = new PebbleDictionary();
         dict.addUint8(MESSAGE_KEY_CMD, (byte)cmd);
+
+        sendMessage(dict);
+    }
+
+    protected void sendMessageToJS(int cmd, PebbleDictionary dict) {
+        // create a message for pebble and send it
+        if(dict == null) dict = new PebbleDictionary();
+        dict.addUint32(JS_KEY_CMD, cmd);
+
+        sendMessage(dict);
+    }
+
+    private void sendMessage(PebbleDictionary dict) {
+        if(dict == null) return;
 
         cacheLock.lock();
         // calculate next seq
