@@ -133,7 +133,7 @@ public class TimeRecConnector {
 
     protected void timeRecGetInfo(MessageEvent evt) {
         Intent intent = new Intent("com.dynamicg.timerecording.GET_INFO");
-        intent.putExtra(EXTRA_FLAG, FLAG_WEEKLY_DELTA + FLAG_MONTHLY_DELTA + FLAG_TOTAL_WEEK + FLAG_TOTAL_MONTH);
+        intent.putExtra(EXTRA_FLAG, FLAG_WEEKLY_DELTA + FLAG_MONTHLY_DELTA + FLAG_TOTAL_WEEK + FLAG_TOTAL_MONTH + FLAG_FORCE_LOAD);
 
         sendIntent(intent, evt);
     }
