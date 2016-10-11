@@ -36,7 +36,7 @@ Pebble.addEventListener('appmessage', function(msg) {
 
         var pin = {};
         pin['id'] = msg.payload['JS_KEY_TLPIN_ID'];
-        pin['time'] = msg.payload['JS_KEY_TLPIN_TIME'];
+        pin['time'] = new Date(msg.payload['JS_KEY_TLPIN_TIME']).toISOString();
         pin['layout'] = layout;
         /* TODO: set reminder */
         timeline.insertUserPin(pin, function(responseText) {
