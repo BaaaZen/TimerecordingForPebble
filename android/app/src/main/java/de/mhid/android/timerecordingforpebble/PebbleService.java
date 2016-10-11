@@ -14,14 +14,23 @@ package de.mhid.android.timerecordingforpebble;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.util.PebbleDictionary;
 
+import java.util.Random;
+
 public class PebbleService extends Service {
+    private final static String SPREF_KEY_CURRENT_ID = "CURRENT_ID";
+    private final static String SPREF_KEY_CURRENT_CTR = "CURRENT_CTR";
+    private final static String SPREF_KEY_TIMELINE_PIN_TIMESTAMP = "TIMELINE_PIN_TIMESTAMP";
+    private final static String SPREF_KEY_UNIQUE_ID = "UNIQUE_ID";
+
     private PebbleMessenger messenger = new PebbleMessenger();
     private TimeRecConnector timeRec = null;
     private boolean firstTimelineUpdate = true;
@@ -143,10 +152,83 @@ public class PebbleService extends Service {
         return str != null ? str : "";
     }
 
+    private long getLongFromBundle(Bundle bundle, String key) {
+        return bundle.getLong(key, 0);
+    }
+
     private void genResponseTimeline(Bundle bundle, boolean forceUpdateTimeline) {
-        if(bundle == null) {
-            /* TODO: handle timeline actions */
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        long currentId = sharedPrefs.getLong(SPREF_KEY_CURRENT_ID, 1);
+        long currentCtr = sharedPrefs.getLong(SPREF_KEY_CURRENT_CTR, 0);
+        String uniqueID = sharedPrefs.getString(SPREF_KEY_UNIQUE_ID, "");
+        long timelinePinTimestamp = sharedPrefs.getLong(SPREF_KEY_TIMELINE_PIN_TIMESTAMP, 0);
+
+        if(uniqueID == null || uniqueID.isEmpty()) {
+            /* generate a unique id for pebble timeline api */
+            Random r = new Random();
+            uniqueID = Integer.toString(r.nextInt(Integer.MAX_VALUE));
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putString(SPREF_KEY_UNIQUE_ID, uniqueID);
+            editor.commit();
         }
+
+        boolean updateTimelinePin = false;
+        boolean deleteTimelinePin = false;
+
+        if(bundle == null) {
+            /* no data available -> delete timeline pin */
+            deleteTimelinePin = true;
+        } else {
+            /* fetch target reached timestamp from bundle */
+            long timestamp = getLongFromBundle(bundle, TimeRecConnector.DAY_TARGET_REACHED_MILLIS);
+            if(timestamp > 0) {
+                /* we have a valid timestamp! */
+                if(timestamp != timelinePinTimestamp) {
+                    /* we need to update timeline pin */
+                    updateTimelinePin = true;
+                    timelinePinTimestamp = timestamp;
+                }
+            } else {
+                /* no timestamp set -> delete timeline pin */
+                deleteTimelinePin = true;
+            }
+        }
+
+        boolean updateSharedPrefs = false;
+        if(deleteTimelinePin && currentId > 0) {
+            String timelineId = "TR4P-" + uniqueID + "-" + Long.toString(currentId);
+
+            timelinePinTimestamp = 0;
+            currentId = 0;
+
+            /* delete timeline pin */
+            PebbleDictionary dict = new PebbleDictionary();
+            dict.addString(PebbleMessenger.JS_KEY_TLPIN_ID, timelineId);
+
+            messenger.sendMessageToJS(PebbleMessenger.JS_CMD_DEL_PIN, dict);
+        } else if(updateTimelinePin && timelinePinTimestamp > 0) {
+            if(currentId == 0) {
+                currentCtr++;
+                currentId = currentCtr;
+            }
+
+            String timelineId = "TR4P-" + uniqueID + "-" + Long.toString(currentId);
+
+            /* create/update timeline pin */
+            PebbleDictionary dict = new PebbleDictionary();
+            dict.addString(PebbleMessenger.JS_KEY_TLPIN_ID, timelineId);
+            dict.addString(PebbleMessenger.JS_KEY_TLPIN_TIME, Long.toString(timelinePinTimestamp));
+            dict.addString(PebbleMessenger.JS_KEY_TLPIN_NAME, getString(R.string.tr4p_pebble_timeline_pin_target_reached));
+            dict.addUint8(PebbleMessenger.JS_KEY_TLPIN_TYPE, (byte)0); /* value ignored ATM but has to be set! */
+
+            messenger.sendMessageToJS(PebbleMessenger.JS_CMD_SET_PIN, dict);
+        }
+
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putLong(SPREF_KEY_CURRENT_ID, currentId);
+        editor.putLong(SPREF_KEY_CURRENT_CTR, currentCtr);
+        editor.putLong(SPREF_KEY_TIMELINE_PIN_TIMESTAMP, timelinePinTimestamp);
+        editor.commit();
     }
 
     private void genResponseStatus(Bundle bundle) {
@@ -162,7 +244,7 @@ public class PebbleService extends Service {
             noDataDict.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_TEXT, status);
             noDataDict.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_COLOR, PebbleMessenger.MESSAGE_COLOR_RED);
 
-            messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, noDataDict);
+            messenger.sendMessageToPebble(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, noDataDict);
 
             return;
         }
@@ -189,7 +271,7 @@ public class PebbleService extends Service {
         dict1.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_TEXT, commonStatus);
         dict1.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_COLOR, commonColor);
         /* send first package */
-        messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict1);
+        messenger.sendMessageToPebble(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict1);
 
         String time;
         /* create face 1: work time day/week */
@@ -207,7 +289,7 @@ public class PebbleService extends Service {
         dict2.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_TEXT, time);
         dict2.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
         /* send face 1 */
-        messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict2);
+        messenger.sendMessageToPebble(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict2);
 
         /* create face 2: daily time left */
         PebbleDictionary dict3 = new PebbleDictionary();
@@ -224,7 +306,7 @@ public class PebbleService extends Service {
         dict3.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_TEXT, time);
         dict3.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR, PebbleMessenger.MESSAGE_COLOR_BLACK);
         /* send face 2 */
-        messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict3);
+        messenger.sendMessageToPebble(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict3);
 
         /* create face 3: weekly time left */
         PebbleDictionary dict4 = new PebbleDictionary();
@@ -241,7 +323,7 @@ public class PebbleService extends Service {
         dict4.addString(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_TEXT, time);
         dict4.addUint8(PebbleMessenger.MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR, getColorForTimevalue(time));
         /* send face 3 */
-        messenger.sendMessage(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict4);
+        messenger.sendMessageToPebble(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict4);
     }
 
 }

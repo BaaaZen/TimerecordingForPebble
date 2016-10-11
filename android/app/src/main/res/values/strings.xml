@@ -10,4 +10,5 @@
     <string name="tr4p_pebble_face_title_delta_day">Delta day</string>
     <string name="tr4p_pebble_face_title_delta_week">Delta week</string>
     <string name="tr4p_pebble_no_data">no data</string>
+    <string name="tr4p_pebble_timeline_pin_target_reached">Day target reached</string>
 </resources>

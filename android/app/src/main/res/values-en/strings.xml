@@ -11,4 +11,5 @@
     <string name="tr4p_pebble_no_task">no task</string>
     <string name="tr4p_pebble_task">Task</string>
     <string name="tr4p_pebble_no_data">no data</string>
+    <string name="tr4p_pebble_timeline_pin_target_reached">Day target reached</string>
 </resources>
