@@ -45,6 +45,7 @@ public class TimeRecConnector {
     protected static final String DELTA_WEEK_FORMATTED = "DELTA_WEEK_FORMATTED";
     protected static final String DAY_TARGET_REACHED = "DAY_TARGET_REACHED";
     protected static final String DAY_TARGET_REACHED_FORMATTED_SHORT = "DAY_TARGET_REACHED_FORMATTED_SHORT";
+    protected static final String DAY_TARGET_REACHED_MILLIS = "DAY_TARGET_REACHED_MILLIS";
     protected static final String DAY_MAX_TIME_THRESHOLD = "DAY_MAX_TIME_THRESHOLD";
     protected static final String WEEK_TARGET_REACHED = "WEEK_TARGET_REACHED";
     protected static final String WEEK_MAX_TIME_THRESHOLD = "WEEK_MAX_TIME_THRESHOLD";
