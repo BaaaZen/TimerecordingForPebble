@@ -43,7 +43,13 @@
                     "name": "AB_BUTTON_TASK",
                     "targetPlatforms": null,
                     "type": "bitmap"
-                }
+                },
+				{
+					"menuIcon": true,
+					"type": "png",
+					"name": "IMAGE_MENU_ICON",
+					"file": "images/app-icon.png"
+				}
             ]
         },
         "sdkVersion": "3",
