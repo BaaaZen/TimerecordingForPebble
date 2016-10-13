@@ -42,11 +42,11 @@ public class PebbleService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        /* init time rec connector */
+        timeRec = new TimeRecConnector(this);
+
         /* register pebble message events */
         initEvents();
-
-        /* init connector for time recording */
-        timeRec = new TimeRecConnector(this);
 
         /* init pebble messenger */
         messenger.initReceiver(this);
