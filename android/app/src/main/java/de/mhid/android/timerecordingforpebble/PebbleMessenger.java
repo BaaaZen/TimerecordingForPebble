@@ -224,6 +224,8 @@ public class PebbleMessenger {
     }
 
     protected void sendMessageToPebble(int cmd, PebbleDictionary dict) {
+        Log.d(this.getClass().getName(), "sendMessageToPebble()");
+
         // create a message for pebble and send it
         if(dict == null) dict = new PebbleDictionary();
         dict.addUint8(MESSAGE_KEY_CMD, (byte)cmd);
@@ -232,6 +234,8 @@ public class PebbleMessenger {
     }
 
     protected void sendMessageToJS(int cmd, PebbleDictionary dict) {
+        Log.d(this.getClass().getName(), "sendMessageToJS()");
+
         // create a message for pebble and send it
         if(dict == null) dict = new PebbleDictionary();
         dict.addUint32(JS_KEY_CMD, cmd);
@@ -240,6 +244,8 @@ public class PebbleMessenger {
     }
 
     private void sendMessage(PebbleDictionary dict) {
+        Log.d(this.getClass().getName(), "sendMessage()");
+
         if(dict == null) return;
 
         cacheLock.lock();

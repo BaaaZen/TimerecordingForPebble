@@ -157,6 +157,8 @@ public class PebbleService extends Service {
     }
 
     private void genResponseTimeline(Bundle bundle, boolean forceUpdateTimeline) {
+        Log.d(this.getClass().getName(), "genResponseTimeline()");
+
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         long currentId = sharedPrefs.getLong(SPREF_KEY_CURRENT_ID, 1);
         long currentCtr = sharedPrefs.getLong(SPREF_KEY_CURRENT_CTR, 0);
