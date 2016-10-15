@@ -24,4 +24,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.getpebble:pebblekit:3.0.0'
+    compile 'com.github.baaazen:java-pebble-timeline:master-SNAPSHOT'
 }
