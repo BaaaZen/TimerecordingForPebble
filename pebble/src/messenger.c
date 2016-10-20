@@ -17,11 +17,20 @@
 static void msg_inbox_received_callback(DictionaryIterator *iter, void *context) {
   // message received -> fetch and parse command in package
   Tuple *cmd_tuple = dict_find(iter, MESSAGE_KEY_CMD);
+  Tuple *js_cmd_tuple = dict_find(iter, MESSAGE_JS_KEY_CMD);
   if(cmd_tuple) {
     uint8_t cmd = cmd_tuple->value->uint8;
 
     if(cmd == MESSAGE_CMD_STATUS_RESPONSE) {
       msg_parse_cmd_status_response(iter);
+    } else if(cmd == MESSAGE_CMD_REQUEST_TL_TOKEN) {
+      msg_parse_cmd_request_tl_token(iter);
+    }
+  } else if(js_cmd_tuple) {
+    uint8_t cmd = js_cmd_tuple->value->uint8;
+
+    if(cmd == MESSAGE_JS_CMD_RESPONSE_TL_TOKEN) {
+      msg_parse_js_cmd_response_tl_token(iter);
     }
   }
 }
@@ -73,6 +82,19 @@ static void msg_parse_cmd_status_response(DictionaryIterator *iter) {
     data_update_display_cache(t_f_id->value->uint8, t_f_d_s->value->cstring, msg_parse_color(t_f_d_c->value->uint8),
       t_f_t1_s->value->cstring, msg_parse_color(t_f_t1_c->value->uint8),
       t_f_t2_s->value->cstring, msg_parse_color(t_f_t2_c->value->uint8));
+  }
+}
+
+static void msg_parse_cmd_request_tl_token(DictionaryIterator *iter) {
+  /* just forward request to js */
+  msg_js_cmd_request_tl_token();
+}
+
+static void msg_parse_js_cmd_response_tl_token(DictionaryIterator *iter) {
+  /* just forward response to android app */
+  Tuple *token = dict_find(iter, MESSAGE_JS_KEY_TL_TOKEN);
+  if(token) {
+    msg_cmd_response_tl_token(token->value->cstring);
   }
 }
 
@@ -138,10 +160,57 @@ void msg_cmd_action_punch(void) {
   }
 }
 
+void msg_cmd_response_tl_token(char *token) {
+  // Declare the dictionary's iterator
+  DictionaryIterator *out_msg;
+
+  // Prepare the outbox buffer for this message
+  AppMessageResult result = app_message_outbox_begin(&out_msg);
+  if(result == APP_MSG_OK) {
+    // Add an item to ask for weather data
+    dict_write_uint8(out_msg, MESSAGE_KEY_CMD, MESSAGE_CMD_RESPONSE_TL_TOKEN);
+    dict_write_cstring(out_msg, MESSAGE_KEY_TL_TOKEN, token);
+
+    // Send this message
+    result = app_message_outbox_send();
+
+    // Check the result
+    if(result != APP_MSG_OK) {
+      APP_LOG(APP_LOG_LEVEL_ERROR, "Error sending the outbox: %d", (int)result);
+    }
+  } else {
+    // The outbox cannot be used right now
+    APP_LOG(APP_LOG_LEVEL_ERROR, "Error preparing the outbox: %d", (int)result);
+  }
+}
+
+void msg_js_cmd_request_tl_token(void) {
+  // Declare the dictionary's iterator
+  DictionaryIterator *out_msg;
+
+  // Prepare the outbox buffer for this message
+  AppMessageResult result = app_message_outbox_begin(&out_msg);
+  if(result == APP_MSG_OK) {
+    // Add an item to ask for weather data
+    dict_write_uint8(out_msg, MESSAGE_JS_KEY_CMD, MESSAGE_JS_CMD_REQUEST_TL_TOKEN);
+
+    // Send this message
+    result = app_message_outbox_send();
+
+    // Check the result
+    if(result != APP_MSG_OK) {
+      APP_LOG(APP_LOG_LEVEL_ERROR, "Error sending the outbox: %d", (int)result);
+    }
+  } else {
+    // The outbox cannot be used right now
+    APP_LOG(APP_LOG_LEVEL_ERROR, "Error preparing the outbox: %d", (int)result);
+  }
+}
+
 
 void msg_init(void) {
   const int inbound_size = 256;
-  const int outbound_size = 64;
+  const int outbound_size = 256;
   app_message_open(inbound_size, outbound_size);
   app_message_register_inbox_received(msg_inbox_received_callback);
   app_message_register_inbox_dropped(msg_inbox_dropped_callback);

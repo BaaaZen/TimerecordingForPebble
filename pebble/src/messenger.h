@@ -16,6 +16,8 @@
 static void msg_inbox_received_callback(DictionaryIterator *iter, void *context);
 static GColor msg_parse_color(uint8_t c);
 static void msg_parse_cmd_status_response(DictionaryIterator *iter);
+static void msg_parse_cmd_request_tl_token(DictionaryIterator *iter);
+static void msg_parse_js_cmd_response_tl_token(DictionaryIterator *iter);
 static void msg_inbox_dropped_callback(AppMessageResult reason, void *context);
 static void msg_outbox_sent_callback(DictionaryIterator *iter, void *context);
 static void msg_outbox_failed_callback(DictionaryIterator *iter, AppMessageResult reason, void *context);
@@ -25,6 +27,8 @@ void msg_init(void);
 void msg_deinit(void);
 void msg_cmd_fetch_status(void);
 void msg_cmd_action_punch(void);
+void msg_cmd_response_tl_token(char *token);
+void msg_js_cmd_request_tl_token(void);
 
 
 #define MESSAGE_COLOR_BLACK 0
@@ -40,13 +44,14 @@ void msg_cmd_action_punch(void);
 #define MESSAGE_CMD_STATUS_REQUEST 1
 #define MESSAGE_CMD_STATUS_RESPONSE 2
 #define MESSAGE_CMD_ACTION_PUNCH 3
+#define MESSAGE_CMD_REQUEST_TL_TOKEN 4
+#define MESSAGE_CMD_RESPONSE_TL_TOKEN 5
 
 #define MESSAGE_KEY_CMD 1
 
 #define MESSAGE_KEY_STATUS_RESPONSE_STATUS_CHECKED_IN 2
 #define MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_TEXT 3
 #define MESSAGE_KEY_STATUS_RESPONSE_STATUS_CONTENT_COLOR 4
-
 
 #define MESSAGE_KEY_STATUS_RESPONSE_FACE_ID 5
 #define MESSAGE_KEY_STATUS_RESPONSE_FACE_TEXT 6
@@ -57,3 +62,11 @@ void msg_cmd_action_punch(void);
 #define MESSAGE_KEY_STATUS_RESPONSE_FACE_TIME2_COLOR 11
 
 #define MESSAGE_KEY_STATUS_RESPONSE_FACE_CLEARALL 12
+
+#define MESSAGE_KEY_TL_TOKEN 13
+
+#define MESSAGE_JS_KEY_CMD 10000
+#define MESSAGE_JS_KEY_TL_TOKEN 10001
+
+#define MESSAGE_JS_CMD_REQUEST_TL_TOKEN 1
+#define MESSAGE_JS_CMD_RESPONSE_TL_TOKEN 2

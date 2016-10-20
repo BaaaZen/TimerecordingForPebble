@@ -5,6 +5,8 @@
     "name": "timerecording-for-pebble",
     "pebble": {
         "appKeys": {
+          "JS_KEY_CMD": 10000,
+          "JS_KEY_TL_TOKEN": 10001
         },
         "capabilities": [
             ""
