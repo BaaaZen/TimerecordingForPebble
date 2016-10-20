@@ -10,7 +10,7 @@
             ""
         ],
         "displayName": "Time Recording",
-        "enableMultiJS": false,
+        "enableMultiJS": true,
         "messageKeys": [],
         "projectType": "native",
         "resources": {
@@ -39,12 +39,12 @@
                     "targetPlatforms": null,
                     "type": "bitmap"
                 },
-        				{
-        					"menuIcon": true,
-        					"type": "png",
-        					"name": "IMAGE_MENU_ICON",
-        					"file": "images/app-icon.png"
-        				}
+				{
+					"menuIcon": true,
+					"type": "png",
+					"name": "IMAGE_MENU_ICON",
+					"file": "images/app-icon.png"
+				}
             ]
         },
         "sdkVersion": "3",
