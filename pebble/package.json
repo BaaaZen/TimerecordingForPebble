@@ -4,16 +4,16 @@
     "keywords": [],
     "name": "timerecording-for-pebble",
     "pebble": {
-        "appKeys": {
-          "JS_KEY_CMD": 10000,
-          "JS_KEY_TL_TOKEN": 10001
-        },
+        "appKeys": {},
         "capabilities": [
             ""
         ],
         "displayName": "Time Recording",
         "enableMultiJS": true,
-        "messageKeys": [],
+        "messageKeys": {
+            "JS_KEY_CMD": 10000,
+            "JS_KEY_TL_TOKEN": 10001
+        },
         "projectType": "native",
         "resources": {
             "media": [
@@ -41,12 +41,12 @@
                     "targetPlatforms": null,
                     "type": "bitmap"
                 },
-				{
-					"menuIcon": true,
-					"type": "png",
-					"name": "IMAGE_MENU_ICON",
-					"file": "images/app-icon.png"
-				}
+        				{
+        					"menuIcon": true,
+        					"type": "png",
+        					"name": "IMAGE_MENU_ICON",
+        					"file": "images/app-icon.png"
+        				}
             ]
         },
         "sdkVersion": "3",
