@@ -40,6 +40,7 @@ public class PebbleMessenger {
     protected final static int MESSAGE_CMD_STATUS_REQUEST = 1;
     protected final static int MESSAGE_CMD_STATUS_RESPONSE = 2;
     protected final static int MESSAGE_CMD_ACTION_PUNCH = 3;
+    protected final static int MESSAGE_CMD_RESPONSE_TL_TOKEN = 5;
 
     protected final static int MESSAGE_KEY_CMD = 1;
 
@@ -57,16 +58,7 @@ public class PebbleMessenger {
 
     protected final static int MESSAGE_KEY_STATUS_RESPONSE_FACE_CLEARALL = 12;
 
-    /* JS communication */
-    protected final static int JS_CMD_SET_PIN = 1;
-    protected final static int JS_CMD_DEL_PIN = 2; /* not implemented yet! */
-
-    protected final static int JS_KEY_CMD = 1001;
-    protected final static int JS_KEY_TLPIN_ID = 1002;
-    protected final static int JS_KEY_TLPIN_TYPE = 1003;
-    protected final static int JS_KEY_TLPIN_TIME = 1004;
-    protected final static int JS_KEY_TLPIN_NAME = 1005;
-
+    protected final static int MESSAGE_KEY_TL_TOKEN = 13;
 
     private PebbleKit.PebbleDataReceiver dataReceiver = null;
     private PebbleKit.PebbleAckReceiver ackReceiver = null;
@@ -229,16 +221,6 @@ public class PebbleMessenger {
         // create a message for pebble and send it
         if(dict == null) dict = new PebbleDictionary();
         dict.addUint8(MESSAGE_KEY_CMD, (byte)cmd);
-
-        sendMessage(dict);
-    }
-
-    protected void sendMessageToJS(int cmd, PebbleDictionary dict) {
-        Log.d(this.getClass().getName(), "sendMessageToJS()");
-
-        // create a message for pebble and send it
-        if(dict == null) dict = new PebbleDictionary();
-        dict.addUint32(JS_KEY_CMD, cmd);
 
         sendMessage(dict);
     }

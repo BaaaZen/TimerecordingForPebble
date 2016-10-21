@@ -17,23 +17,34 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.util.PebbleDictionary;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.Random;
+
+import nl.palolem.timeline.Timeline;
+import nl.palolem.timeline.api.pin.Icon;
+import nl.palolem.timeline.api.pin.Pin;
+import nl.palolem.timeline.api.pin.layout.GenericPin;
+import nl.palolem.timeline.util.PebbleException;
 
 public class PebbleService extends Service {
     private final static String SPREF_KEY_CURRENT_ID = "CURRENT_ID";
     private final static String SPREF_KEY_CURRENT_CTR = "CURRENT_CTR";
     private final static String SPREF_KEY_TIMELINE_PIN_TIMESTAMP = "TIMELINE_PIN_TIMESTAMP";
+    private final static String SPREF_KEY_TIMELINE_TOKEN = "TIMELINE_TOKEN";
     private final static String SPREF_KEY_UNIQUE_ID = "UNIQUE_ID";
 
     private PebbleMessenger messenger = new PebbleMessenger();
     private TimeRecConnector timeRec = null;
     private boolean firstTimelineUpdate = true;
+    private String pebbleTimelineToken = null;
 
     public PebbleService() {
     }
@@ -41,6 +52,10 @@ public class PebbleService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        /* a little hack to make http requests in main thread available */
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         /* init time rec connector */
         timeRec = new TimeRecConnector(this);
@@ -104,6 +119,15 @@ public class PebbleService extends Service {
                 evtRequestStatus(true, true, true);
             }
         });
+        /* received timeline token */
+        messenger.registerMessageEvent(PebbleMessenger.MESSAGE_CMD_RESPONSE_TL_TOKEN, new PebbleMessenger.MessageEvent() {
+            @Override
+            public void messageReceived(PebbleMessenger msgr, PebbleDictionary dict) {
+                if(dict.contains(PebbleMessenger.MESSAGE_KEY_TL_TOKEN)) {
+                    pebbleTimelineToken = dict.getString(PebbleMessenger.MESSAGE_KEY_TL_TOKEN);
+                }
+            }
+        });
 
         timeRec.registerOnDataChangeEvent(new TimeRecConnector.DataChangeEventHandler() {
             @Override
@@ -164,6 +188,15 @@ public class PebbleService extends Service {
         long currentCtr = sharedPrefs.getLong(SPREF_KEY_CURRENT_CTR, 0);
         String uniqueID = sharedPrefs.getString(SPREF_KEY_UNIQUE_ID, "");
         long timelinePinTimestamp = sharedPrefs.getLong(SPREF_KEY_TIMELINE_PIN_TIMESTAMP, 0);
+        String timelineToken = sharedPrefs.getString(SPREF_KEY_TIMELINE_TOKEN, null);
+
+        if(pebbleTimelineToken != null && !pebbleTimelineToken.isEmpty()) {
+            /* use freshly fetched timeline token */
+            timelineToken = pebbleTimelineToken;
+        } else if(timelineToken == null || timelineToken.isEmpty()) {
+            /* we don't have a timeline token, so we can't continue */
+            return;
+        }
 
         if(uniqueID == null || uniqueID.isEmpty()) {
             /* generate a unique id for pebble timeline api */
@@ -200,14 +233,26 @@ public class PebbleService extends Service {
         if(deleteTimelinePin && currentId > 0) {
             String timelineId = "TR4P-" + uniqueID + "-" + Long.toString(currentId);
 
-            timelinePinTimestamp = 0;
-            currentId = 0;
-
             /* delete timeline pin */
-            PebbleDictionary dict = new PebbleDictionary();
-            dict.addString(PebbleMessenger.JS_KEY_TLPIN_ID, timelineId);
+            Pin pin = new Pin.Builder().id(timelineId).build();
+            try {
+                Timeline.deletePin(timelineToken, pin);
 
-            messenger.sendMessageToJS(PebbleMessenger.JS_CMD_DEL_PIN, dict);
+                timelinePinTimestamp = 0;
+                currentId = 0;
+
+                Log.d(this.getClass().getName(), "pin " + timelineId + " deleted successfully");
+            } catch (IOException e) {
+                /* failed contacting server -> do nothing and retry later */
+                Log.e(this.getClass().getName(), "error deleting pin", e);
+            } catch (PebbleException e) {
+                /* other error -> maybe pin already deleted? */
+
+                timelinePinTimestamp = 0;
+                currentId = 0;
+
+                Log.e(this.getClass().getName(), "error deleting pin", e);
+            }
         } else if(updateTimelinePin && timelinePinTimestamp > 0) {
             if(currentId == 0) {
                 currentCtr++;
@@ -217,19 +262,35 @@ public class PebbleService extends Service {
             String timelineId = "TR4P-" + uniqueID + "-" + Long.toString(currentId);
 
             /* create/update timeline pin */
-            PebbleDictionary dict = new PebbleDictionary();
-            dict.addString(PebbleMessenger.JS_KEY_TLPIN_ID, timelineId);
-            dict.addString(PebbleMessenger.JS_KEY_TLPIN_TIME, Long.toString(timelinePinTimestamp));
-            dict.addString(PebbleMessenger.JS_KEY_TLPIN_NAME, getString(R.string.tr4p_pebble_timeline_pin_target_reached));
-            dict.addUint8(PebbleMessenger.JS_KEY_TLPIN_TYPE, (byte)0); /* value ignored ATM but has to be set! */
+            Pin pin = new Pin.Builder().id(timelineId)
+                    .time(new Date(timelinePinTimestamp))
+                    .layout(new GenericPin.Builder()
+                        .title(getString(R.string.tr4p_pebble_timeline_pin_target_reached))
+                        .tinyIcon(Icon.RESULT_SENT)
+                        .build())
+                    .build();
+            try {
+                Timeline.sendPin(timelineToken, pin);
 
-            messenger.sendMessageToJS(PebbleMessenger.JS_CMD_SET_PIN, dict);
+                Log.d(this.getClass().getName(), "pin " + timelineId + " created/updated successfully");
+            } catch (IOException e) {
+                /* failed contacting server -> retry creating/updating later */
+                timelinePinTimestamp = 0;
+
+                Log.e(this.getClass().getName(), "error creating/updating pin", e);
+            } catch (PebbleException e) {
+                /* other error -> retry later */
+                timelinePinTimestamp = 0;
+
+                Log.e(this.getClass().getName(), "error creating/updating pin", e);
+            }
         }
 
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putLong(SPREF_KEY_CURRENT_ID, currentId);
         editor.putLong(SPREF_KEY_CURRENT_CTR, currentCtr);
         editor.putLong(SPREF_KEY_TIMELINE_PIN_TIMESTAMP, timelinePinTimestamp);
+        editor.putString(SPREF_KEY_TIMELINE_TOKEN, timelineToken);
         editor.commit();
     }
 
