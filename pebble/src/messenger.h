@@ -28,7 +28,6 @@ void msg_deinit(void);
 void msg_cmd_fetch_status(void);
 void msg_cmd_action_punch(void);
 void msg_cmd_response_tl_token(char *token);
-void msg_js_cmd_request_tl_token(void);
 
 
 #define MESSAGE_COLOR_BLACK 0
@@ -44,7 +43,6 @@ void msg_js_cmd_request_tl_token(void);
 #define MESSAGE_CMD_STATUS_REQUEST 1
 #define MESSAGE_CMD_STATUS_RESPONSE 2
 #define MESSAGE_CMD_ACTION_PUNCH 3
-#define MESSAGE_CMD_REQUEST_TL_TOKEN 4
 #define MESSAGE_CMD_RESPONSE_TL_TOKEN 5
 
 #define MESSAGE_KEY_CMD 1
@@ -68,5 +66,4 @@ void msg_js_cmd_request_tl_token(void);
 #define MESSAGE_JS_KEY_CMD 10000
 #define MESSAGE_JS_KEY_TL_TOKEN 10001
 
-#define MESSAGE_JS_CMD_REQUEST_TL_TOKEN 1
 #define MESSAGE_JS_CMD_RESPONSE_TL_TOKEN 2
