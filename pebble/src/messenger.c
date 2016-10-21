@@ -83,11 +83,6 @@ static void msg_parse_cmd_status_response(DictionaryIterator *iter) {
   }
 }
 
-static void msg_parse_cmd_request_tl_token(DictionaryIterator *iter) {
-  /* just forward request to js */
-  msg_js_cmd_request_tl_token();
-}
-
 static void msg_parse_js_cmd_response_tl_token(DictionaryIterator *iter) {
   /* just forward response to android app */
   Tuple *token = dict_find(iter, MESSAGE_JS_KEY_TL_TOKEN);
