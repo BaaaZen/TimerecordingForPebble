@@ -16,7 +16,6 @@
 static void msg_inbox_received_callback(DictionaryIterator *iter, void *context);
 static GColor msg_parse_color(uint8_t c);
 static void msg_parse_cmd_status_response(DictionaryIterator *iter);
-static void msg_parse_cmd_request_tl_token(DictionaryIterator *iter);
 static void msg_parse_js_cmd_response_tl_token(DictionaryIterator *iter);
 static void msg_inbox_dropped_callback(AppMessageResult reason, void *context);
 static void msg_outbox_sent_callback(DictionaryIterator *iter, void *context);
