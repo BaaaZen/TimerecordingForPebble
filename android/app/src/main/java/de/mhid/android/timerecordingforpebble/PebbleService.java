@@ -105,7 +105,7 @@ public class PebbleService extends Service {
             @Override
             public void messageReceived(PebbleMessenger msgr, PebbleDictionary dict) {
                 // send current status to pebble
-                evtRequestStatus(firstTimelineUpdate, true, false);
+                evtRequestStatus(true, firstTimelineUpdate, false);
                 firstTimelineUpdate = false;
             }
         });
