@@ -15,6 +15,7 @@ package de.mhid.android.timerecordingforpebble;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.StrictMode;
@@ -180,12 +181,24 @@ public class PebbleService extends Service {
         return bundle.getLong(key, 0);
     }
 
+    private synchronized long getNextTimelineCtr() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        long currentCtr = sharedPrefs.getLong(SPREF_KEY_CURRENT_CTR, 0);
+
+        currentCtr++;
+
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putLong(SPREF_KEY_CURRENT_CTR, currentCtr);
+        editor.commit();
+
+        return currentCtr;
+    }
+
     private void genResponseTimeline(Bundle bundle, boolean forceUpdateTimeline) {
         Log.d(this.getClass().getName(), "genResponseTimeline()");
 
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         long currentId = sharedPrefs.getLong(SPREF_KEY_CURRENT_ID, 1);
-        long currentCtr = sharedPrefs.getLong(SPREF_KEY_CURRENT_CTR, 0);
         String uniqueID = sharedPrefs.getString(SPREF_KEY_UNIQUE_ID, "");
         long timelinePinTimestamp = sharedPrefs.getLong(SPREF_KEY_TIMELINE_PIN_TIMESTAMP, 0);
         String timelineToken = sharedPrefs.getString(SPREF_KEY_TIMELINE_TOKEN, null);
@@ -229,69 +242,87 @@ public class PebbleService extends Service {
             }
         }
 
-        boolean updateSharedPrefs = false;
-        if(deleteTimelinePin && currentId > 0) {
-            String timelineId = "TR4P-" + uniqueID + "-" + Long.toString(currentId);
+        final boolean fDeleteTimelinePin = deleteTimelinePin;
+        final boolean fUpdateTimelinePin = updateTimelinePin;
+        final long fCurrentId = currentId;
+        final String fUniqueID = uniqueID;
+        final String fTimelineToken = timelineToken;
+        final long fTimelinePinTimestamp = timelinePinTimestamp;
 
-            /* delete timeline pin */
-            Pin pin = new Pin.Builder().id(timelineId).build();
-            try {
-                Timeline.deletePin(timelineToken, pin);
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                long currentId = fCurrentId;
+                String uniqueID = fUniqueID;
+                String timelineToken = fTimelineToken;
+                long timelinePinTimestamp = fTimelinePinTimestamp;
 
-                timelinePinTimestamp = 0;
-                currentId = 0;
+                /* boolean updateSharedPrefs = false; */
+                if(fDeleteTimelinePin && currentId > 0) {
+                    String timelineId = "TR4P-" + uniqueID + "-" + Long.toString(currentId);
 
-                Log.d(this.getClass().getName(), "pin " + timelineId + " deleted successfully");
-            } catch (IOException e) {
-                /* failed contacting server -> do nothing and retry later */
-                Log.e(this.getClass().getName(), "error deleting pin", e);
-            } catch (PebbleException e) {
-                /* other error -> maybe pin already deleted? */
+                    /* delete timeline pin */
+                    Pin pin = new Pin.Builder().id(timelineId).build();
+                    try {
+                        Timeline.deletePin(timelineToken, pin);
 
-                timelinePinTimestamp = 0;
-                currentId = 0;
+                        timelinePinTimestamp = 0;
+                        currentId = 0;
 
-                Log.e(this.getClass().getName(), "error deleting pin", e);
+                        Log.d(this.getClass().getName(), "pin " + timelineId + " deleted successfully");
+                    } catch (IOException e) {
+                        /* failed contacting server -> do nothing and retry later */
+                        Log.e(this.getClass().getName(), "error deleting pin", e);
+                    } catch (PebbleException e) {
+                        /* other error -> maybe pin already deleted? */
+
+                        timelinePinTimestamp = 0;
+                        currentId = 0;
+
+                        Log.e(this.getClass().getName(), "error deleting pin", e);
+                    }
+                } else if(fUpdateTimelinePin && timelinePinTimestamp > 0) {
+                    if(currentId == 0) {
+                        currentId = getNextTimelineCtr();
+                    }
+
+                    String timelineId = "TR4P-" + uniqueID + "-" + Long.toString(currentId);
+
+                    /* create/update timeline pin */
+                    Pin pin = new Pin.Builder().id(timelineId)
+                            .time(new Date(timelinePinTimestamp))
+                            .layout(new GenericPin.Builder()
+                                .title(getString(R.string.tr4p_pebble_timeline_pin_target_reached))
+                                .tinyIcon(Icon.RESULT_SENT)
+                                .build())
+                            .build();
+                    try {
+                        Timeline.sendPin(timelineToken, pin);
+
+                        Log.d(this.getClass().getName(), "pin " + timelineId + " created/updated successfully");
+                    } catch (IOException e) {
+                        /* failed contacting server -> retry creating/updating later */
+                        timelinePinTimestamp = 0;
+
+                        Log.e(this.getClass().getName(), "error creating/updating pin", e);
+                    } catch (PebbleException e) {
+                        /* other error -> retry later */
+                        timelinePinTimestamp = 0;
+
+                        Log.e(this.getClass().getName(), "error creating/updating pin", e);
+                    }
+                }
+
+                SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.putLong(SPREF_KEY_CURRENT_ID, currentId);
+                editor.putLong(SPREF_KEY_TIMELINE_PIN_TIMESTAMP, timelinePinTimestamp);
+                editor.putString(SPREF_KEY_TIMELINE_TOKEN, timelineToken);
+                editor.commit();
             }
-        } else if(updateTimelinePin && timelinePinTimestamp > 0) {
-            if(currentId == 0) {
-                currentCtr++;
-                currentId = currentCtr;
-            }
+        };
 
-            String timelineId = "TR4P-" + uniqueID + "-" + Long.toString(currentId);
-
-            /* create/update timeline pin */
-            Pin pin = new Pin.Builder().id(timelineId)
-                    .time(new Date(timelinePinTimestamp))
-                    .layout(new GenericPin.Builder()
-                        .title(getString(R.string.tr4p_pebble_timeline_pin_target_reached))
-                        .tinyIcon(Icon.RESULT_SENT)
-                        .build())
-                    .build();
-            try {
-                Timeline.sendPin(timelineToken, pin);
-
-                Log.d(this.getClass().getName(), "pin " + timelineId + " created/updated successfully");
-            } catch (IOException e) {
-                /* failed contacting server -> retry creating/updating later */
-                timelinePinTimestamp = 0;
-
-                Log.e(this.getClass().getName(), "error creating/updating pin", e);
-            } catch (PebbleException e) {
-                /* other error -> retry later */
-                timelinePinTimestamp = 0;
-
-                Log.e(this.getClass().getName(), "error creating/updating pin", e);
-            }
-        }
-
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putLong(SPREF_KEY_CURRENT_ID, currentId);
-        editor.putLong(SPREF_KEY_CURRENT_CTR, currentCtr);
-        editor.putLong(SPREF_KEY_TIMELINE_PIN_TIMESTAMP, timelinePinTimestamp);
-        editor.putString(SPREF_KEY_TIMELINE_TOKEN, timelineToken);
-        editor.commit();
+        /* asynchronous update timeline */
+        new AsyncExecTask().doInBackground(r);
     }
 
     private void genResponseStatus(Bundle bundle) {
@@ -389,4 +420,15 @@ public class PebbleService extends Service {
         messenger.sendMessageToPebble(PebbleMessenger.MESSAGE_CMD_STATUS_RESPONSE, dict4);
     }
 
+
+    private class AsyncExecTask extends AsyncTask<Runnable, Void, Void> {
+        @Override
+        protected Void doInBackground(Runnable... runnables) {
+            for(Runnable r : runnables) {
+                r.run();
+            }
+
+            return null;
+        }
+    }
 }
