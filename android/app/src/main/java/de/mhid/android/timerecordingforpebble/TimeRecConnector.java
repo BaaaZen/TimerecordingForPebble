@@ -83,7 +83,7 @@ public class TimeRecConnector {
 
     private void init() {
         /* init broadcast receiver for data change event from time recording */
-        IntentFilter filter = new IntentFilter("com.dynamicg.timerecording.DATA_CHANGED");
+        IntentFilter filter = new IntentFilter("com.dynamicg.timerecording.STAMP_DATA_CHANGED");
         onTimeRecDataChangedReceiver = new BroadcastReceiverOnTimeRecDataChanged();
         context.registerReceiver(onTimeRecDataChangedReceiver, filter);
     }
