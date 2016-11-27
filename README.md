@@ -5,6 +5,9 @@ The Pebble app is available in the [Pebble App-Store](https://apps.getpebble.com
 
 
 ## Changelog
+###### Version 1.1.1
+* Bugfix: Punching in/out made Pebble app hang
+
 ###### Version 1.1.0
 * Timeline pin for daily target reached
 * Icon for Pebble App on Firmware 4.x
