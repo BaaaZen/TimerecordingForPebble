@@ -47,6 +47,8 @@ public class PebbleService extends Service {
     private boolean firstTimelineUpdate = true;
     private String pebbleTimelineToken = null;
 
+    private static long lastStatusUpdateTimestamp = 0;
+
     public PebbleService() {
     }
 
@@ -99,6 +101,21 @@ public class PebbleService extends Service {
         return null;
     }
 
+    public static boolean isRedundantStatusUpdate() {
+        long currentTS = System.currentTimeMillis();
+        try {
+            /* invalid last timestamp? */
+            if(lastStatusUpdateTimestamp <= 0 || lastStatusUpdateTimestamp > currentTS) return false;
+            /* last time called was less than 100ms ago? */
+            if(currentTS - lastStatusUpdateTimestamp < 100) return true;
+
+            return false;
+        } finally {
+            lastStatusUpdateTimestamp = currentTS;
+        }
+
+    }
+
     private void initEvents() {
         Log.d(this.getClass().getName(), "initEvents()");
         /* request status */
@@ -148,6 +165,12 @@ public class PebbleService extends Service {
     private void evtRequestStatus(final boolean sendStatusMessage, final boolean updateTimeline, final boolean forceUpdateTimeline) {
         /* event from pebble: request status */
         Log.d(this.getClass().getName(), "evtRequestStatus()");
+
+        if(isRedundantStatusUpdate()) {
+            Log.d(this.getClass().getName(), "evtRequestStatus(): !!! WARNING: redundant status update -> ignore request !!!");
+            return;
+        }
+
         TimeRecConnector.MessageEvent recvHandler = new TimeRecConnector.MessageEvent() {
             @Override
             public void messageReceived(Bundle bundle) {
