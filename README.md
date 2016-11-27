@@ -1,7 +1,7 @@
 # Timerecording for Pebble
 Timerecording for Pebble is an information and control app for [Time Recording](https://play.google.com/store/apps/details?id=com.dynamicg.timerecording) on the [Pebble Smartwatch](http://www.pebble.com). This repository contains two parts: the Pebble app and the Android companion app. The Android companion app is compatible with the [pro version](https://play.google.com/store/apps/details?id=com.dynamicg.timerecording.pro) of Time Recording, as well as with the [free version](https://play.google.com/store/apps/details?id=com.dynamicg.timerecording).
 
-The Pebble app is available in the [Pebble App-Store](https://apps.getpebble.com/application/57ae0288f01b53901a00021c) and the Android companion app is available in the [Google Play Store](https://play.google.com/store/apps/details?id=de.mhid.android.timerecordingforpebble).
+The Pebble app is available in the [Pebble App-Store](https://apps.getpebble.com/en_US/application/57ae0288f01b53901a00021c) and the Android companion app is available in the [Google Play Store](https://play.google.com/store/apps/details?id=de.mhid.android.timerecordingforpebble).
 
 
 ## Changelog
