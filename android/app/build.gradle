@@ -8,8 +8,8 @@ android {
         applicationId "de.mhid.android.timerecordforpebble"
         minSdkVersion 18
         targetSdkVersion 24
-        versionCode 110
-        versionName "1.1.0"
+        versionCode 111
+        versionName "1.1.1"
     }
     buildTypes {
         release {
